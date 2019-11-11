@@ -20,6 +20,7 @@ namespace StudentShare.API.Controllers
             _context = context;
 
         }
+        [AllowAnonymous]
         // GET api/values
         [HttpGet]
         public async Task<IActionResult> GetValues() // Async to allow more than one user to access at a time
