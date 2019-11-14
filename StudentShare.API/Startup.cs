@@ -35,7 +35,7 @@ namespace StudentShare.API
             (Configuration.GetConnectionString("DefaultConnection")));
             services.AddCors();
             services.AddScoped<IAuthRepository, AuthRepository>(); // lets us inject these into our controllers
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // code from opensource Neil @ Udemy.
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {

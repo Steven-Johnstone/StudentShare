@@ -31,13 +31,16 @@ namespace StudentShare.API.Controllers
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
+            userForRegisterDto.Email = userForRegisterDto.Email.ToLower();
 
-            if (await _repo.UserExists(userForRegisterDto.Username))
-            return BadRequest("Username already exists.");
+            if (await _repo.UserExists(userForRegisterDto.Username, userForRegisterDto.Email))
+            return BadRequest("User already exists.");
+
 
             var userToCreate = new User
             {
-                Username = userForRegisterDto.Username
+                Username = userForRegisterDto.Username,
+                Email = userForRegisterDto.Email
             };
 
             var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
@@ -67,7 +70,7 @@ namespace StudentShare.API.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor // creates the token
             {
                 Subject = new ClaimsIdentity(claims), //passes the claims from above
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddYears(10),
                 SigningCredentials = creds
             };
 

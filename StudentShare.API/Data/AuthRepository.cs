@@ -66,9 +66,11 @@ namespace StudentShare.API.Data
             
         }
 
-        public async Task<bool> UserExists(string username)
+        public async Task<bool> UserExists(string username, string email)
         {
-            if (await _context.Users.AnyAsync(x => x.Username == username)) //checks db to see if user exists
+            if (await _context.Users.AnyAsync(x => x.Username == username)) //checks db to see if username exists
+                return true;
+            if (await _context.Users.AnyAsync(x => x.Email == email)) //checks db to see if email exists
                 return true;
 
             return false;

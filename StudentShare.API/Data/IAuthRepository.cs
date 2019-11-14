@@ -9,6 +9,6 @@ namespace StudentShare.API.Data
 
          Task<User> Login(string username, string password);
 
-         Task<bool> UserExists(string username);
+         Task<bool> UserExists(string username, string email);
     }
 }
