@@ -8,7 +8,7 @@ namespace StudentShare.API.Dtos
         public string Username { get; set; }
 
         [Required]
-        [RegularExpression(@"\b[A-Za-z0-9._%-]+@(live\.wcs\.ac\.uk)\b")]
+        [RegularExpression(@"\b[A-Za-z0-9._%-]+@(live\.wcs\.ac\.uk)\b", ErrorMessage = "Email must be a WCS college email address.")]
         public string Email {get; set; }
 
         [Required]

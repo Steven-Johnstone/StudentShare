@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,9 +31,15 @@ namespace StudentShare.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) 
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(opt => {
+                    opt.SerializerSettings.ReferenceLoopHandling =
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
             services.AddDbContext<DataContext>(x => x.UseSqlite
             (Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IStudentRepository, StudentRepository>(); //lets us injext these into our user controller
+            services.AddAutoMapper(typeof(StudentRepository).Assembly);
             services.AddCors();
             services.AddScoped<IAuthRepository, AuthRepository>(); // lets us inject these into our controllers
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // code from opensource Neil @ Udemy.
