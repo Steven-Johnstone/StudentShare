@@ -80,7 +80,7 @@ namespace StudentShare.API.Controllers
 
             return Ok(new {
                 token = tokenHandler.WriteToken(token) //when its ok, it writes the token 
-            });
+            });                
         }
     }
 
