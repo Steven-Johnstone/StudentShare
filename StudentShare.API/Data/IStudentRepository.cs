@@ -11,5 +11,9 @@ namespace StudentShare.API.Data
          Task<bool> SaveAll(); // method to save changes to the DB
          Task<IEnumerable<User>> GetUsers(); // method to return a list of users
          Task<User> GetUser(int id); // method to get a specific user
+
+         Task<Photo> GetPhoto(int id); // method to get an id from photo
+
+         Task<Photo> GetMainPhoto(int userId); // method to get main photo
     }
 }

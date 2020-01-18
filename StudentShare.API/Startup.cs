@@ -44,6 +44,7 @@ namespace StudentShare.API
             (Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IStudentRepository, StudentRepository>(); //lets us injext these into our user controller
             services.AddAutoMapper(typeof(StudentRepository).Assembly);
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings")); // configuring services for cloudinary 
             services.AddCors();
             services.AddScoped<IAuthRepository, AuthRepository>(); // lets us inject these into our controllers
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // code from opensource Neil @ Udemy.

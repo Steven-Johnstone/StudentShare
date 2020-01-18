@@ -46,11 +46,11 @@ namespace StudentShare.API.Controllers
         [HttpPut("{id}")]
 
         public async Task<IActionResult> UpdateUser(int id, UserUpdateDto userUpdateDto)
-        {
+        {   // compare userId against the route paramater of userId to see if they match 
             if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            return Unauthorized();
+            return Unauthorized(); // deny access
 
-            var userFromRepo = await _repo.GetUser(id);
+            var userFromRepo = await _repo.GetUser(id); // gets the userId from the database
 
             _mapper.Map(userUpdateDto, userFromRepo);
 

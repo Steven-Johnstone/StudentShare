@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using StudentShare.API.Models;
@@ -23,6 +24,18 @@ namespace StudentShare.API.Data
         public void Delete<T>(T entity) where T : class
         {
             _context.Remove(entity); // removes the entity
+        }
+
+        public async Task<Photo> GetMainPhoto(int userId)
+        {
+            return await _context.Photos.Where(n => n.UserId == userId).FirstOrDefaultAsync(p => p.MainPhoto); // returns the main photo based on the UserId
+        }
+
+        public async Task<Photo> GetPhoto(int id)
+        {   // going to context to get first match of id being passed in
+            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
+
+            return photo; // returning the photo
         }
 
         public async Task<User> GetUser(int id) 

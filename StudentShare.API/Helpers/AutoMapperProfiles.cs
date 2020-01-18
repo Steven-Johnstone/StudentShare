@@ -18,6 +18,8 @@ namespace StudentShare.API.Helpers
                 opt.MapFrom(src => src.Photo.FirstOrDefault(p => p.MainPhoto).Url)); 
             CreateMap<Photo, PhotosForDetailsDto>();
             CreateMap<UserUpdateDto, User>();
+            CreateMap<Photo, PhotoForReturnDto>();
+            CreateMap<PhotoForCreationDto, Photo>();
         }
     }
 }
