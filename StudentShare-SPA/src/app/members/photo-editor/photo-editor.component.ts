@@ -53,6 +53,7 @@ export class PhotoEditorComponent implements OnInit {
           mainPhoto: res.mainPhoto
         };
         this.photos.push(photo);
+
       }
     };
   }

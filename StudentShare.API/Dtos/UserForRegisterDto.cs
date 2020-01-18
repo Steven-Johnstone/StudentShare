@@ -12,6 +12,9 @@ namespace StudentShare.API.Dtos
         public string Email {get; set; }
 
         [Required]
+        public string KnownAs { get; set; }
+
+        [Required]
         [StringLength(8, MinimumLength = 4, ErrorMessage = "Password must be between 4 and 8 characters.")]
         public string Password {get; set; }
 

@@ -32,6 +32,7 @@ namespace StudentShare.API.Controllers
         {
             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
             userForRegisterDto.Email = userForRegisterDto.Email.ToLower();
+            userForRegisterDto.KnownAs = userForRegisterDto.KnownAs;
 
             if (await _repo.UserExists(userForRegisterDto.Username, userForRegisterDto.Email))
             return BadRequest("User already exists.");
@@ -40,7 +41,8 @@ namespace StudentShare.API.Controllers
             var userToCreate = new User
             {
                 Username = userForRegisterDto.Username,
-                Email = userForRegisterDto.Email
+                Email = userForRegisterDto.Email,
+                KnownAs = userForRegisterDto.KnownAs
             };
 
             var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);

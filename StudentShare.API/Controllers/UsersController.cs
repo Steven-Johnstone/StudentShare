@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentShare.API.Data;
 using StudentShare.API.Dtos;
+using StudentShare.API.Helpers;
 
 namespace StudentShare.API.Controllers
 {
+    [ServiceFilter(typeof(LogUserActivity))] //updates the last active date based on any of these methods being called
     [Authorize] // users need to be authorised before access is granted to info
     [Route("api/[controller]")]
     [ApiController]
