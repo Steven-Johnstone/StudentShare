@@ -16,5 +16,7 @@ namespace StudentShare.API.Models
         public DateTime LastActive { get; set; }
         public string AboutMe { get; set; }
         public ICollection<Photo> Photo { get; set; }
+        public ICollection<Like> Likees { get; set; }
+        public ICollection<Like> Likers { get; set; }
     }
 }

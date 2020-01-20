@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using StudentShare.API.Helpers;
 using StudentShare.API.Models;
 
 namespace StudentShare.API.Data
@@ -26,9 +27,16 @@ namespace StudentShare.API.Data
             _context.Remove(entity); // removes the entity
         }
 
+        public async Task<Like> GetLike(int userId, int recipientId)
+        {
+            return await _context.Likes.FirstOrDefaultAsync(u => 
+            u.LikerId == userId && u.LikeeId == recipientId); // returns null if none of the ID's match otherwise it return the like
+        }
+
         public async Task<Photo> GetMainPhoto(int userId)
         {
-            return await _context.Photos.Where(n => n.UserId == userId).FirstOrDefaultAsync(p => p.MainPhoto); // returns the main photo based on the UserId
+            return await _context.Photos.Where(n => n.UserId == userId)
+            .FirstOrDefaultAsync(p => p.MainPhoto); // returns the main photo based on the UserId
         }
 
         public async Task<Photo> GetPhoto(int id)
@@ -45,11 +53,40 @@ namespace StudentShare.API.Data
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(UserParams userParams)
         { // returns a list of the users as well as the users photos
-            var users = await _context.Users.Include(p => p.Photo).ToListAsync();
+            var users = _context.Users.Include(p => p.Photo).OrderByDescending(u => u.LastActive).AsQueryable();
 
-            return users;
+            users = users.Where(u => u.Id != userParams.UserId);
+
+            if (userParams.Likers)
+            {
+                var userLikers = await GetUserLikes(userParams.UserId, userParams.Likers);
+                users = users.Where(u => userLikers.Contains(u.Id)); // returns userLikers that match a user id in the users, as users
+            }
+
+            if (userParams.Likees)
+            {
+                var userLikees = await GetUserLikes(userParams.UserId, userParams.Likers);
+                users = users.Where(u => userLikees.Contains(u.Id)); // returns userLikees that match a user id in the users, as users
+            }
+
+            return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize); // returns the users as a paged list
+        }
+
+        private async Task<IEnumerable<int>> GetUserLikes(int id, bool likers)
+        {
+            var user = await _context.Users.Include(x => x.Likers)
+            .Include(x => x.Likees).FirstOrDefaultAsync(u => u.Id == id);
+
+            if (likers)
+            {
+                return user.Likers.Where(u => u.LikeeId == id).Select(i => i.LikerId); // returns a list of likers of the current user
+            }
+            else 
+            {
+                return user.Likees.Where(u => u.LikerId == id).Select(i => i.LikeeId); // returns a list of likees of the current user
+            }
         }
 
         public async Task<bool> SaveAll()
