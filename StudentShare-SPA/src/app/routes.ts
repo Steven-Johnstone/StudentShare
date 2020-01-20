@@ -9,6 +9,7 @@ import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
 import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
+import { ListsResolver } from './_resolvers/lists.resolver';
 
 
 // routes direct each link - authguard protects them against users that are not currently
@@ -25,6 +26,6 @@ export const appRoutes: Routes = [
     {path: 'member/edit', component: MemberEditComponent,
     resolve: {user: MemberEditResolver}, canActivate: [AuthGuard]},
     {path: 'messages', component: MessagesComponent, canActivate: [AuthGuard]},
-    {path: 'lists', component: ListsComponent, canActivate: [AuthGuard]},
+    {path: 'lists', component: ListsComponent, resolve: {users: ListsResolver}, canActivate: [AuthGuard]},
     {path: '**', redirectTo: '', pathMatch: 'full'},
 ];

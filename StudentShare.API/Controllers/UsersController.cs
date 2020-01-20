@@ -30,7 +30,13 @@ namespace StudentShare.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await _repo.GetUsers(userParams);
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value); // sets currentuser to matching user
+
+            var userFromRepo = await _repo.GetUser(currentUserId); // gets the user from the repo
+
+            userParams.UserId = currentUserId; // stores the current user in user params
+
+            var users = await _repo.GetUsers(userParams); // stores the user via getusers method into users
 
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users); // maps the info from user into our ListDto
 
