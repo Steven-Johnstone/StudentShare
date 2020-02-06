@@ -42,7 +42,7 @@ namespace StudentShare.API
                 });
             services.AddDbContext<DataContext>(x => x.UseSqlite
             (Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<IStudentRepository, StudentRepository>(); //lets us injext these into our user controller
+            services.AddScoped<IStudentRepository, StudentRepository>(); // lets us injext these into our user controller
             services.AddAutoMapper(typeof(StudentRepository).Assembly);
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings")); // configuring services for cloudinary 
             services.AddCors();
@@ -83,10 +83,10 @@ namespace StudentShare.API
                     });
                 });
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                //app.UseHsts();
+                // app.UseHsts();
             }
 
-            //app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseMvc();

@@ -76,7 +76,7 @@ namespace StudentShare.API.Controllers
                 SigningCredentials = creds
             };
 
-            var tokenHandler = new JwtSecurityTokenHandler(); 
+            var tokenHandler = new JwtSecurityTokenHandler(); // create new tokenhandler
 
             var token = tokenHandler.CreateToken(tokenDescriptor); //creates the JWT for the tokendescripter above
 

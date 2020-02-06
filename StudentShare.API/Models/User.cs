@@ -18,5 +18,7 @@ namespace StudentShare.API.Models
         public ICollection<Photo> Photo { get; set; }
         public ICollection<Like> Likees { get; set; }
         public ICollection<Like> Likers { get; set; }
+        public ICollection<Message> MessagesReceived { get; set; }
+        public ICollection<Message> MessagesSent { get; set; }
     }
 }

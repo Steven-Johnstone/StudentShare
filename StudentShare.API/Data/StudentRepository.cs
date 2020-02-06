@@ -93,5 +93,47 @@ namespace StudentShare.API.Data
         { // returns true or false for changes saved to the DB, more than 0 will return true, 0 returns false
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<Message> GetMessage(int id)
+        {
+            return await  _context.Messages.FirstOrDefaultAsync(m => m.Id == id); // gets message from the db 
+        }
+
+        public async Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams)
+        {
+            var messages = _context.Messages.Include(u => u.Sender).ThenInclude( p=> p.Photo) // get sender and photo of sender from db
+                .Include(u => u.Recipient).ThenInclude(p => p.Photo) // get recipient and photo of recipient from db
+                .AsQueryable();
+
+            switch (messageParams.MessageContainer) 
+            {   // switch through the different types of messages
+                case "Inbox":
+                    messages = messages.Where(u => u.RecipientId == messageParams.UserId); // inbox to show recieved messages where recipientId matches UserId
+                    break;
+                    case "Outbox":
+                    messages = messages.Where(u => u.SenderId == messageParams.UserId); // outbox to show sent messages where senderId matches UserId
+                    break;
+                    default:
+                    messages = messages.Where(u => u.RecipientId == messageParams.UserId 
+                    && u.IsRead == false); // inbox to show recieved messages where recipientId matches UserId & the message hasnt been read
+                    break;
+
+            }
+
+            messages = messages.OrderByDescending(d => d.MessageSent); // sort messages by most recent first
+            return await PagedList<Message>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize); // returns the paged list of messages
+        }
+
+        public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
+        {
+            var messages = await _context.Messages.Include(u => u.Sender).ThenInclude(p=> p.Photo) // get sender and photo of sender from db
+                .Include(u => u.Recipient).ThenInclude(p => p.Photo) // get recipient and photo of recipient from db
+                .Where(m => m.RecipientId == userId && m.SenderId == recipientId 
+                || m.RecipientId == recipientId && m.SenderId == userId) // gets complete conversation, to and from each user
+                    .OrderByDescending(m => m.MessageSent) // gets back in order
+                    .ToListAsync();
+
+            return messages;
+        }
     }
 }
