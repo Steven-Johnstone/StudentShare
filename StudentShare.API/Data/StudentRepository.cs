@@ -108,14 +108,16 @@ namespace StudentShare.API.Data
             switch (messageParams.MessageContainer) 
             {   // switch through the different types of messages
                 case "Inbox":
-                    messages = messages.Where(u => u.RecipientId == messageParams.UserId); // inbox to show recieved messages where recipientId matches UserId
+                    messages = messages.Where(u => u.RecipientId 
+                    == messageParams.UserId && u.RecipientDeleted == false); // inbox to show recieved messages where recipientId matches UserId and are not deleted by the recipient
                     break;
                     case "Outbox":
-                    messages = messages.Where(u => u.SenderId == messageParams.UserId); // outbox to show sent messages where senderId matches UserId
+                    messages = messages.Where(u => u.SenderId 
+                    == messageParams.UserId && u.SenderDeleted == false); // outbox to show sent messages where senderId matches UserId and are not deleted by the sender
                     break;
                     default:
-                    messages = messages.Where(u => u.RecipientId == messageParams.UserId 
-                    && u.IsRead == false); // inbox to show recieved messages where recipientId matches UserId & the message hasnt been read
+                    messages = messages.Where(u => u.RecipientId == messageParams.UserId && u.RecipientDeleted == false 
+                    && u.IsRead == false); // inbox to show recieved messages where recipientId matches UserId & the message hasnt been read and the recipient hasn't deleted
                     break;
 
             }
@@ -128,8 +130,8 @@ namespace StudentShare.API.Data
         {
             var messages = await _context.Messages.Include(u => u.Sender).ThenInclude(p=> p.Photo) // get sender and photo of sender from db
                 .Include(u => u.Recipient).ThenInclude(p => p.Photo) // get recipient and photo of recipient from db
-                .Where(m => m.RecipientId == userId && m.SenderId == recipientId 
-                || m.RecipientId == recipientId && m.SenderId == userId) // gets complete conversation, to and from each user
+                .Where(m => m.RecipientId == userId && m.RecipientDeleted == false && m.SenderId == recipientId 
+                || m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted == false) // gets complete conversation, to and from each user
                     .OrderByDescending(m => m.MessageSent) // gets back in order
                     .ToListAsync();
 

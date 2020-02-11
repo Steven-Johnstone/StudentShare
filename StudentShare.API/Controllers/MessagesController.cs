@@ -63,8 +63,10 @@ namespace StudentShare.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMessage(int userId, MessageForCreationDto messageForCreationDto)
         {
-            // compare userId against the route paramater of userId to see if they match 
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            var sender = await _repo.GetUser(userId);
+
+            // compare sender against the route paramater of userId to see if they match 
+            if (sender.Id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             return Unauthorized(); // deny access
 
             messageForCreationDto.SenderId = userId; // set SenderId in the repo to the userId
@@ -78,15 +80,15 @@ namespace StudentShare.API.Controllers
 
             _repo.Add(message); // add message to the repo
 
-            var messageToReturn = _mapper.Map<MessageForCreationDto>(message); // maps the message into our dto
-
-            if(await _repo.SaveAll()) // save message
+            if(await _repo.SaveAll()) { // save message
+                var messageToReturn = _mapper.Map<MessageToReturnDto>(message); // maps the message into our dto
                 return CreatedAtRoute("GetMessage", new{id = message.Id}, messageToReturn); // if successful return the message id and the message via the route
+            } 
 
             throw new Exception("Creating message failed on save"); // if save fails return an error
         }
 
-        [HttpGet("thread/{recipentId}")] // needs thread to let ASP.NET core distinguish between the previous get for just an id and this 
+        [HttpGet("thread/{recipientId}")] // needs thread to let ASP.NET core distinguish between the previous get for just an id and this 
         public async Task<IActionResult> GetMessageThread(int userId, int recipientId)
         {
             // compare userId against the route paramater of userId to see if they match 
@@ -99,5 +101,50 @@ namespace StudentShare.API.Controllers
 
             return Ok(messageThread); // returning our filtered message
         }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> DeleteMessage(int id, int userId)
+        {
+            // compare userId against the route paramater of userId to see if they match 
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            return Unauthorized(); // deny access
+
+            var messageFromRepo = await _repo.GetMessage(id); // get the message from the repo
+
+            if (messageFromRepo.SenderId == userId) // if the senderId matches the user id, set sender deleted to true
+                messageFromRepo.SenderDeleted = true;
+
+            if (messageFromRepo.RecipientId == userId) // if the recipientId matches the recipient id, set recipient deleted to true
+                messageFromRepo.RecipientDeleted = true;
+
+            if (messageFromRepo.SenderDeleted && messageFromRepo.RecipientDeleted) // if both values are true
+                _repo.Delete(messageFromRepo); // only delete message once both sides of the conversation have deleted
+
+            if (await _repo.SaveAll())
+                return NoContent(); // return nothing if save is ok
+
+            throw new Exception("Error deleting the message");
+        }
+
+        [HttpPost("{id}/read")]
+        public async Task<IActionResult> ReadMessage(int userId, int id)
+        {
+            // compare userId against the route paramater of userId to see if they match 
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            return Unauthorized(); // deny access
+
+            var message = await _repo.GetMessage(id); // get message from the repo
+
+            if (message.RecipientId != userId) // if recipientid doesnt match the userid, dont authorise
+                return Unauthorized();
+
+            message.IsRead = true; // set message to read
+            message.DateRead = DateTime.Now; // set time of message being read
+
+            await _repo.SaveAll();
+
+            return NoContent();
+        }
+
     }
 }
