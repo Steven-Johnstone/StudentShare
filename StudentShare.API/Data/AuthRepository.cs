@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using StudentShare.API.Models;
@@ -16,7 +15,7 @@ namespace StudentShare.API.Data
         }
         public async Task<User> Login(string username, string password) //async to make it possible for many users to do at the same time
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username); //used to find username that matches or return null
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username); //find username that matches or return null
 
             if (user == null)
                 return null;

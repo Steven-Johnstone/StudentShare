@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StudentShare.API.Data;
 using StudentShare.API.Helpers;
@@ -48,7 +42,7 @@ namespace StudentShare.API
             services.AddCors();
             services.AddScoped<LogUserActivity>();
             services.AddScoped<IAuthRepository, AuthRepository>(); // lets us inject these into our controllers
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // code from opensource Neil @ Udemy.
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // code for JWT's taken from opensource - Neil @ Udemy.
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -69,16 +63,16 @@ namespace StudentShare.API
                 app.UseDeveloperExceptionPage();
             }
             else
-            {
+            { 
                 app.UseExceptionHandler(builder => {
                     builder.Run(async context => {
                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-                        var error = context.Features.Get<IExceptionHandlerFeature>();
+                        var error = context.Features.Get<IExceptionHandlerFeature>(); // gets the details of the error
                         if (error != null)
                         {
-                            context.Response.AddApplicationError(error.Error.Message);
-                            await context.Response.WriteAsync(error.Error.Message);
+                            context.Response.AddApplicationError(error.Error.Message); // writes new header into the response
+                            await context.Response.WriteAsync(error.Error.Message); // writes the error message into http response
                         }
                     });
                 });
@@ -89,7 +83,13 @@ namespace StudentShare.API
             // app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            app.UseMvc(routes => 
+            { // if no route for controller end point is found - use this controller as the fall back to serve the index 
+                routes.MapSpaFallbackRoute( name: "spa-fallback",
+                defaults: new {controller = "Fallback", action = "Index"});
+            });
         }
     }
 }

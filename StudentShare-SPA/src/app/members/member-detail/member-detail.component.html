@@ -2,7 +2,8 @@
   <div class="row">
     <div class="col-sm-4">
         <div class="card">
-          <img class ="card-img-top img-thumbnail" src="{{user.photoUrl || '../../../assets/user.png'}}" alt="{{user.knownAs}}">
+          <img class ="card-img-top img-thumbnail" src="{{user.photoUrl || '../../../assets/user.png'}}" 
+          alt="{{user.knownAs}}">
           <div class="card-body">
             <div>
               <strong>Course</strong>
@@ -19,7 +20,7 @@
         </div>
           <div class="card-footer">
             <div class ="btn-group d-flex">
-              <button class="btn btn-primary w-100 mr-2">Like</button>
+              <button class="btn btn-primary w-100 mr-2" (click)="sendLike(user.id)">Like</button>
               <button class="btn btn-success w-100" (click)="selectTab(2)">Message</button>
             </div>
           </div>          
@@ -33,7 +34,7 @@
               <p>{{user.aboutMe}}</p>
             </tab>
             <tab heading="Photos">
-                <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+              <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
             </tab>
             <tab heading="Messages">
               <app-member-messages [recipientId]="user.id"></app-member-messages>

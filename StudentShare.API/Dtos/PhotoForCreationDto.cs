@@ -7,7 +7,7 @@ namespace StudentShare.API.Dtos
     {
         public string Url { get; set; }
 
-        public IFormFile File { get; set; }
+        public IFormFile File { get; set; } // needed for sending a file with an HTTP request
 
         public string Description { get; set; }
 

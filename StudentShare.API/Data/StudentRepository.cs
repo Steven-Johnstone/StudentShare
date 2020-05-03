@@ -30,7 +30,7 @@ namespace StudentShare.API.Data
         public async Task<Like> GetLike(int userId, int recipientId)
         {
             return await _context.Likes.FirstOrDefaultAsync(u => 
-            u.LikerId == userId && u.LikeeId == recipientId); // returns null if none of the ID's match otherwise it return the like
+            u.LikerId == userId && u.LikeeId == recipientId); // returns null if none of the ID's match otherwise it returns the like
         }
 
         public async Task<Photo> GetMainPhoto(int userId)
@@ -111,11 +111,11 @@ namespace StudentShare.API.Data
                     messages = messages.Where(u => u.RecipientId 
                     == messageParams.UserId && u.RecipientDeleted == false); // inbox to show recieved messages where recipientId matches UserId and are not deleted by the recipient
                     break;
-                    case "Outbox":
+                case "Outbox":
                     messages = messages.Where(u => u.SenderId 
                     == messageParams.UserId && u.SenderDeleted == false); // outbox to show sent messages where senderId matches UserId and are not deleted by the sender
                     break;
-                    default:
+                default:
                     messages = messages.Where(u => u.RecipientId == messageParams.UserId && u.RecipientDeleted == false 
                     && u.IsRead == false); // inbox to show recieved messages where recipientId matches UserId & the message hasnt been read and the recipient hasn't deleted
                     break;

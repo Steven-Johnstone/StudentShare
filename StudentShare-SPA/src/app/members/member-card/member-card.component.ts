@@ -12,7 +12,8 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
 export class MemberCardComponent implements OnInit {
   @Input() user: User; // brings a user down from the user model
 
-  constructor(private authService: AuthService, private userService: UserService, private alertify: AlertifyService) { }
+  constructor(private authService: AuthService, private userService: UserService,
+              private alertify: AlertifyService) { }
 
   ngOnInit() {
   }

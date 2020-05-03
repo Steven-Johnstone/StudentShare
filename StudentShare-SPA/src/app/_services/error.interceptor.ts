@@ -10,26 +10,26 @@ export class ErrorInterceptor implements HttpInterceptor {
     next: import('@angular/common/http').HttpHandler
   ): import('rxjs').Observable<import('@angular/common/http').HttpEvent<any>> {
     return next.handle(req).pipe(
-        catchError(error => {
+        catchError(error => { // catches the error that has been returned via HttpRequest
             if (error.status === 401) {
-                return throwError(error.statusText);
+                return throwError(error.statusText); // throwError throws it back to components
             }
 
             if (error instanceof HttpErrorResponse) {
-                const applicationError = error.headers.get('Application-Error');
+                const applicationError = error.headers.get('Application-Error'); // get the exact error from generated header in API
                 if (applicationError) {
-                    return throwError(applicationError);
+                    return throwError(applicationError); // return this error
                 }
                 const serverError = error.error;
                 let modalStateErrors = '';
-                if (serverError.errors && typeof serverError.errors === 'object') {
+                if (serverError.errors && typeof serverError.errors === 'object') { // does the server error = a type of object?
                     for (const key in serverError.errors) {
-                        if (serverError.errors[key]) {
-                            modalStateErrors += serverError.errors[key] + '\n';
+                        if (serverError.errors[key]) { // if the error has a key (for example the problem lies in the password field)
+                            modalStateErrors += serverError.errors[key] + '\n'; // add this key to the modalStateErrors to return
                         }
                     }
                 }
-                return throwError(modalStateErrors || serverError || 'Server Error');
+                return throwError(modalStateErrors || serverError || 'Server Error'); // if error exists details of the exact error returned
             }
 
         })
@@ -37,7 +37,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 }
 
-export const ErrorInterceptorProvider = {
+export const ErrorInterceptorProvider = { // register a new provider for use
     provide: HTTP_INTERCEPTORS,
     useClass: ErrorInterceptor,
     multi: true

@@ -1,13 +1,13 @@
 <div class="container mt-5">
   <div class="row">
     <div class="btn-group">
-      <button class="btn btn-primary" [(ngModel)]="messageContainer" btnRadio="Unread" (click)="loadMessages()">
+      <button class="btn btn-danger" [(ngModel)]="messageContainer" btnRadio="Unread" (click)="loadMessages()">
         <i class="fa fa-envelope"></i> Unread
       </button>
-      <button class="btn btn-primary" [(ngModel)]="messageContainer" btnRadio="Inbox" (click)="loadMessages()">
+      <button class="btn btn-danger" [(ngModel)]="messageContainer" btnRadio="Inbox" (click)="loadMessages()">
         <i class="fa fa-envelope-open"></i> Inbox
       </button>
-      <button class="btn btn-primary" [(ngModel)]="messageContainer" btnRadio="Outbox" (click)="loadMessages()">
+      <button class="btn btn-danger" [(ngModel)]="messageContainer" btnRadio="Outbox" (click)="loadMessages()">
         <i class="fa fa-paper-plane"></i> Outbox
       </button>
     </div>

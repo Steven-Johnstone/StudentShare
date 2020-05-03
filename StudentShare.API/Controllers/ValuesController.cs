@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +11,10 @@ namespace StudentShare.API.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly DataContext _context;
-        public ValuesController(DataContext context)
+        private readonly DataContext _context; // good practice to put _ if private
+        public ValuesController(DataContext context) // inject the database into the constructor
         {
-            _context = context;
+            _context = context; 
 
         }
         [AllowAnonymous]
@@ -27,15 +24,15 @@ namespace StudentShare.API.Controllers
         {
             var values = await _context.Values.ToListAsync(); //goes and gets values from the database as a list
 
-            return Ok(values);
+            return Ok(values); // returns the values
         }
 
         [AllowAnonymous]
         // GET api/values/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetValue(int id) // Async to allow more than one user to access at a time
-        {
-            var value = await _context.Values.FirstOrDefaultAsync(x => x.Id == id); //goes and gets only the requested value and stores in value
+        {  //goes and gets only the requested value and stores it in value
+            var value = await _context.Values.FirstOrDefaultAsync(x => x.Id == id); 
 
             return Ok(value);
         }

@@ -3,7 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -32,7 +31,6 @@ namespace StudentShare.API.Controllers
         {
             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
             userForRegisterDto.Email = userForRegisterDto.Email.ToLower();
-            userForRegisterDto.KnownAs = userForRegisterDto.KnownAs;
 
             if (await _repo.UserExists(userForRegisterDto.Username, userForRegisterDto.Email))
             return BadRequest("User already exists.");

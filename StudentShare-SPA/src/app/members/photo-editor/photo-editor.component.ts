@@ -25,7 +25,7 @@ export class PhotoEditorComponent implements OnInit {
   ngOnInit() {
     this.initializeUploader();
   }
-
+  // code from valor-software for ng2-file-upload
   fileOverBase(e: any): void {
     this.hasBaseDropZoneOver = e;
   }
